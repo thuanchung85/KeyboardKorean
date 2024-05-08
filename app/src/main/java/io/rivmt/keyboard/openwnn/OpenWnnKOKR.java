@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.text.method.MetaKeyKeyListener;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -316,14 +317,22 @@ public class OpenWnnKOKR extends OpenWnn implements HangulEngineListener {
 		super.onViewClicked(focusChanged);
 	}
 
+	//CHU Y đây là event khi bấm phím
 	@Override
-	public void onEvent(HangulEngineEvent event) {
-		if(event instanceof FinishComposingEvent) {
+	public void onEvent(HangulEngineEvent event)
+	{
+		boolean b = event instanceof FinishComposingEvent;
+		if(b == true) {
 			if(mInputConnection != null) mInputConnection.finishComposingText();
 		}
-		if(event instanceof SetComposingEvent) {
+
+		//luc nhận ra từ
+		boolean c = event instanceof SetComposingEvent;
+		if(c == true) {
 			SetComposingEvent composingEvent = (SetComposingEvent) event;
-			mInputConnection.setComposingText(composingEvent.getComposing(), 1);
+			String x = composingEvent.getComposing();
+
+			mInputConnection.setComposingText(x, 1);
 		}
 	}
 
@@ -687,12 +696,20 @@ public class OpenWnnKOKR extends OpenWnn implements HangulEngineListener {
 		}
 
 		int inputCode = mHangulEngine.inputCode(Character.toLowerCase(code), shift);
-		if(inputCode != -1) {
-			if(mHangulEngine.inputJamo(inputCode) == 0) {
+		//đem input code đi check
+		if(inputCode != -1)
+		{
+			//kiem x
+			int x = mHangulEngine.inputJamo(inputCode);
+
+			if(x == 0)
+			{
 				mInputConnection.commitText(new String(new char[] {(char) inputCode}), 1);
 				resetCharComposition();
 			}
-		} else {
+		}
+		else
+		{
 			resetCharComposition();
 			if (shift > 0) {
 				code = Character.toUpperCase(originalCode);
@@ -1072,6 +1089,7 @@ public class OpenWnnKOKR extends OpenWnn implements HangulEngineListener {
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		Log.w("CHUNG", "onKeyDown: " + keyCode);
 		if(mTimeOutHandler == null) {
 			mTimeOutHandler = new Handler();
 			mTimeOutHandler.postDelayed(() -> {

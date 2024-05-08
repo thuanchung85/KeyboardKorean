@@ -1,5 +1,7 @@
 package io.rivmt.keyboard.openwnn.KOKR;
 
+import android.util.Log;
+
 public class TwelveHangulEngine extends HangulEngine {
 	
 	int[][] addStrokeTable;
@@ -14,8 +16,10 @@ public class TwelveHangulEngine extends HangulEngine {
 		super();
 	}
 
+	//CHU y convert chữ tiếng LAtin qua chữ Hàn
 	@Override
 	public int inputCode(int code, int shift) {
+		Log.w("CHUNG", "inputCode 12: " + code + ", shift: " + shift);
 		int ret = -1;
 		if((lastCode != code)) {
 			resetCycle();
@@ -46,8 +50,10 @@ public class TwelveHangulEngine extends HangulEngine {
 		// 획추가 키.
 		if(jamo == DefaultSoftKeyboardKOKR.KEYCODE_KR12_ADDSTROKE) {
 			boolean found = false;
-			for(int[] item : addStrokeTable) {
-				if(item[0] == addStrokeBase || item[0] == addStrokeBaseCombined) {
+			for(int[] item : addStrokeTable)
+			{
+				if(item[0] == addStrokeBase || item[0] == addStrokeBaseCombined)
+				{
 					if(++addStrokeIndex >= item.length) addStrokeIndex = item.length-1;
 					jamo = item[addStrokeIndex];
 					if(item[0] == addStrokeBaseCombined) eraseJamo();
@@ -57,9 +63,13 @@ public class TwelveHangulEngine extends HangulEngine {
 				}
 			}
 			if(!found) return -1;
-		} else if(jamo == DefaultSoftKeyboardKOKR.KEYCODE_KR12_ADDSTROKE-1) {
-			if((lastInputType == INPUT_CHO2 || lastInputType == INPUT_JONG3) && this.jong != -1) {
-				switch(last) {
+		}
+		else if(jamo == DefaultSoftKeyboardKOKR.KEYCODE_KR12_ADDSTROKE-1)
+		{
+			if((lastInputType == INPUT_CHO2 || lastInputType == INPUT_JONG3) && this.jong != -1)
+			{
+				switch(last)
+				{
 				case 0x11a8:
 					super.backspace();
 					jamo = 0x3132;
@@ -110,6 +120,7 @@ public class TwelveHangulEngine extends HangulEngine {
 			addStrokeBaseCombined = 0;
 		}
 
+		//CHU y đem ret code mã hàn vào class cha HangulEngine để kiếm ra ký tự Hàn
 		int result = super.inputJamo(jamo);
 
 		if(addStrokeBase == 0) {

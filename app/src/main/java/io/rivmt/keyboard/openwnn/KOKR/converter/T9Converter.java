@@ -134,6 +134,8 @@ public class T9Converter implements WordConverter {
 			}
 		}
 
+
+		//CHU Y
 		@Override
 		public void onEvent(HangulEngine.HangulEngineEvent event) {
 			if(event instanceof HangulEngine.SetComposingEvent) {

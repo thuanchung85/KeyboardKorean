@@ -17,6 +17,7 @@
 package io.rivmt.keyboard.openwnn;
 
 import android.inputmethodservice.InputMethodService;
+import android.util.Log;
 import android.view.WindowManager;
 import android.content.Context;
 import android.view.View;
@@ -178,6 +179,7 @@ public class OpenWnn extends InputMethodService {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Log.d("CHUNG ", "CHUNG onKeyDown: " + keyCode);
         InputKeyEvent inputKeyEvent = new InputKeyEvent(event);
         EventBus.getDefault().post(inputKeyEvent);
         mConsumeDownEvent = inputKeyEvent.isCancelled();
@@ -189,6 +191,7 @@ public class OpenWnn extends InputMethodService {
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
+        Log.d("CHUNG ", "CHUNG onKeyUp: " + keyCode);
         boolean ret = mConsumeDownEvent;
         if(!ret) {
             ret = super.onKeyUp(keyCode, event);

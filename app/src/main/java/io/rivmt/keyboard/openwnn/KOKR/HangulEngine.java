@@ -1,5 +1,7 @@
 package io.rivmt.keyboard.openwnn.KOKR;
 
+import android.util.Log;
+
 import java.util.EmptyStackException;
 import java.util.Stack;
 
@@ -219,6 +221,7 @@ public class HangulEngine {
 	 * @return			대응하는 한글 낱자/비한글 문자.
 	 */
 	public int inputCode(int code, int shift) {
+		Log.w("CHUNG", "inputCode GOC: " + code + ", shift: " + shift);
 		int[][] table;
 		if(jamoTable != null) table = jamoTable;
 		else if(jamoSet != null) table = currentJamoTable;
@@ -237,10 +240,13 @@ public class HangulEngine {
 	 * @param code		한글 자모의 유니코드 / 가상 코드.
 	 * @return			입력을 처리한 결과.
 	 */
+	//CHU Y
 	public int inputJamo(int code) {
 
 		// 입력 기록을 업데이트한다.
+		//chổ này lịch sữ save lại các từ trước đó đang trên text input
 		if(composing.equals("")) histories.clear();
+
 		else histories.push(new History(cho, jung, jong, last, beforeJong, composing, lastInputType));
 
 		// 상태를 변환하지 않는다.
@@ -407,7 +413,7 @@ public class HangulEngine {
 			} else {
 				int jungCode = code - 0x314f;
 				if(code >= 0x3187 && code <= 0x318e) jungCode = TRAD_JUNG_CONVERT[code - 0x3187] - 0x1161;
-				// 천지인용 가상 낱자 '천'
+				// 천지인용 가상 낱자 '천'.‘Cheon’, a virtual word for Cheonjiin
 				if(code == 0x01318d) jungCode = 0x01119e - 0x1161;
 				if(this.cho != -1) {
 					// 종성이 두 개 이상 결합되었을 경우
@@ -450,7 +456,7 @@ public class HangulEngine {
 			}
 			result = INPUT_JUNG2;
 		}
-		// 한글 낱자가 아닐 경우
+		// 한글 낱자가 아닐 경우.If it is not a Korean word
 		else {
 			// 조합을 중단하고 처리 안함을 돌려준다.
 			resetComposition();
@@ -459,13 +465,13 @@ public class HangulEngine {
 			return result;
 		}
 
-		// 화면에 표시되는 문자를 계산해서 표시를 요청한다.
+		// 화면에 표시되는 문자를 계산해서 표시를 요청한다.Calculate the characters displayed on the screen and request display.
 		this.composing = getVisible(this.cho, this.jung, this.jong);
 		if(listener != null) listener.onEvent(new SetComposingEvent(composing));
 
 		lastInputType = result;
 
-		// 신세벌식용. 자모 세트에서 테이블을 교환한다.
+		// 신세벌식용. 자모 세트에서 테이블을 교환한다.New Seal food. Exchange the table in the Jamo set.
 		changeJamoTable(((lastInputType & 0x1010) != 0) ? lastInputType & 0x000f : 0);
 
 		return result;
